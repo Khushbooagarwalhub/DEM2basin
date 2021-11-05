@@ -60,12 +60,14 @@ import tempfile
 
 import glob
 import re
+import dem2basin
 
 def argparser():
     """
     Parses command-line arguments for dem2basin run as a script
 
     :return: ArgumentParser.parse_args object for dem2basin
+
     :rtype: parser.parse_args
     """
     ## Define input and output file locations
@@ -3070,6 +3072,14 @@ def pycallgraph_smallest_tx_hu12():
             '/scratch/04950/dhl/WBD-TX-Smallest_HU12-DEM2basin_tmp',
             select_utm = 14,
             pickle_file = '/scratch/04950/dhl/WBD-TX-Smallest_HU12-DEM2basin.pickle'
+        )
+
+def pycallgraph_bounding_boxes_smallest_tx_hu12():
+    with PyCallGraph(output=GraphvizOutput()):
+        dem2basin.get_bounding_boxes_from_coverage_by_shape(
+            '/work/08449/kag/stampede2/WBD-TX-Smallest_HU12.geojson',
+            '/scratch/projects/tnris/dhl-flood-modelling/TNRIS-LIDAR-Availability-20210812.shp',
+            '/scratch/projects/tnris/tnris-lidardata'
         )
 
 def main():
