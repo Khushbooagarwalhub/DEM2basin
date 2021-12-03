@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "/work/08449/kag/stampede2/miniconda3/envs/dem2basin/lib/python3.7/site-packages/pandas/core/indexes/base.py", line 3361, in get_loc
+    return self._engine.get_loc(casted_key)
+  File "pandas/_libs/index.pyx", line 76, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 108, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 5198, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 5206, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'dirname'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/work/08449/kag/stampede2/DEM2basin/src/get_bounds_for_projects_smallest_huc_SE_Texas.py", line 8, in <module>
+    bounding_box_se_texas = dem2basin.get_bounding_boxes_from_coverage_by_shape(shape_input,coverage_input,dem_tile_projects_parent_directory,new_coverage_file = new_coverage_file_parameter)
+  File "/work2/08449/kag/stampede2/DEM2basin/src/dem2basin/dem2basin.py", line 1265, in get_bounding_boxes_from_coverage_by_shape
+    new_coverage_file = new_coverage_file
+  File "/work2/08449/kag/stampede2/DEM2basin/src/dem2basin/dem2basin.py", line 1121, in get_bounding_boxes_by_project
+    project_coverage['dirname_absolute'] = project_coverage['dirname'].apply(lambda dirname: os.path.join(dem_tile_projects_parent_directory,dirname))
+  File "/work/08449/kag/stampede2/miniconda3/envs/dem2basin/lib/python3.7/site-packages/geopandas/geodataframe.py", line 1299, in __getitem__
+    result = super(GeoDataFrame, self).__getitem__(key)
+  File "/work/08449/kag/stampede2/miniconda3/envs/dem2basin/lib/python3.7/site-packages/pandas/core/frame.py", line 3455, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "/work/08449/kag/stampede2/miniconda3/envs/dem2basin/lib/python3.7/site-packages/pandas/core/indexes/base.py", line 3363, in get_loc
+    raise KeyError(key) from err
+KeyError: 'dirname'

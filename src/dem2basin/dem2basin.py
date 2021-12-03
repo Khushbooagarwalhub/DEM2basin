@@ -1118,38 +1118,87 @@ def get_bounding_boxes_by_project(
 
     project_coverage = read_file_or_gdf(project_coverage_input)
 
+    project_coverage['dirname_absolute'] = project_coverage['dirname'].apply(lambda dirname: os.path.join(dem_tile_projects_parent_directory,dirname))
+    list_of_lists_of_tilenames_in_each_project = []
+    list_of_raster_formats = ['*.img','*.dem','*.tif','*.jp2']
+    for dirname_absolute in project_coverage['dirname_absolute']:
+        for raster_fmt in list_of_raster_formats:
+            list_of_lists_of_tilenames_in_each_project.append(list(Path(dirname_absolute).joinpath('dem').glob(raster_fmt)))
+    list_of_gdfs_of_tilenames = []
+    for list_of_tilenames in list_of_lists_of_tilenames_in_each_project:
+       list_of_gdfs_of_tilenames.append(gpd.GeoDataFrame({'filename_absolute':list_of_tilenames}))
+    for gdf in list_of_gdfs_of_tilenames:
+        gdf['bounds'] = gdf['filename_absolute'].apply(lambda fn: rasterio.open(fn).bounds)
+    for gdf in list_of_gdfs_of_tilenames:
+        gdf['geometry'] = gdf['bounds'].apply(lambda bounds: box(*bounds))
+    for gdf in list_of_gdfs_of_tilenames:
+        gdf.drop(columns=['bounds'],inplace=True)
+    for gdf in list_of_gdfs_of_tilenames:
+        gdf.crs = rasterio.open(gdf.loc[0,'filename_absolute']).crs
+    dst_crs = 'EPSG:6317'
+    for gdf in list_of_gdfs_of_tilenames:
+        gdf.to_crs(dst_crs,inplace=True)
+    gdf_of_tilenames = gpd.GeoDataFrame(pd.concat(list_of_gdfs_of_tilenames),crs=dst_crs)
+    gdf_of_tilenames["filename_absolute"].apply(lambda fn : str(fn))
+    if new_coverage_file is not None: 
+        gdf_of_tilenames.to_file(str(new_coverage_file))
+
+    return(gdf_of_tilenames)
+
+def get_bounding_boxes_by_project_original(
+    project_coverage_input,
+    dem_tile_projects_parent_directory,
+    new_coverage_file = None
+):
+    """
+    gets DEM tile bounding boxes for given DEM tile projects
+    
+    :param project_coverage_input: vector image of DEM tile projects
+    :type project_coverage_input: Union[str,pathlib.PurePath,geopandas.GeoDataFrame]
+    :param dem_tile_projects_parent_directory: Parent directory containing
+        DEM tile project directories
+    :type dem_tile_projects_parent_directory: Union[str,pathlib.PurePath]
+    :param new_coverage_file: New coverage file from DEM tile bounding boxes found
+    :type new_coverage_file: Union[str,pathlib.PurePath]
+    :return: geopandas.GeoDataFrame of DEM tile bounding box polygons for given
+        DEM tile projects
+    :rtype: geopandas.GeoDataFrame
+    """
+
+    project_coverage = read_file_or_gdf(project_coverage_input)
+
     projects = []
     for project in project_coverage.index:
-        projects = append_subdirectory(
+        projects = find_and_append_subdirectory(
             projects,
             dem_tile_projects_parent_directory,
             project,
             'dem'
         )
-        projects = append_subdirectory(
+        projects = find_and_append_subdirectory(
             projects,
             dem_tile_projects_parent_directory,
             project,
             'tiles'
         )
 
-    print(projects)
+   # print(projects)
         
     dem_tilenames = []
     filetypes = ('.img', '.dem', '.tif', '.jp2')
     for filetype in filetypes:
-        print(filetype)
+      #  print(filetype)
         for project in projects:
-            print(project)
+       #     print(project)
             for root, dirs, filenames in os.walk(str(project)):
-                print(root,dirs,filenames)
+        #        print(root,dirs,filenames)
                 for filename in filenames:
-                    print(filename)
+         #           print(filename)
                     if filename.endswith(filetype):
-                        print(True)
+          #              print(True)
                         dem_tilenames.append(os.path.join(root,filename))
 
-    print(dem_tilenames)
+   # print(dem_tilenames)
 
     dem_tile_bounds = []
     for dem_tilename in dem_tilenames:
@@ -1158,21 +1207,21 @@ def get_bounding_boxes_by_project(
             rasterio.open(dem_tilename).bounds
         ))
 
-    print(dem_tile_bounds)
+    #print(dem_tile_bounds)
 
     dem_tiles = gpd.GeoDataFrame(
         dem_tile_bounds,
         columns = ['lidar_file','bounds']
     )
 
-    print(dem_tiles)
+    #print(dem_tiles)
 
     dem_tiles.geometry = dem_tiles['bounds'].apply(
         lambda bounds: box(*bounds)
     )
 
-    print(dem_tiles)
-
+    #print(dem_tiles)
+    dem_tiles.drop(columns=['bounds'],errors='ignore',inplace=True)
     if new_coverage_file is not None:
         dem_tiles.to_file(str(new_coverage_file))
 

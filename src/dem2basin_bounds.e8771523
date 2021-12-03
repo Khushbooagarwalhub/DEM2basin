@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/work/08449/kag/stampede2/DEM2basin/src/get_bounds_for_projects_smallest_huc_SE_Texas.py", line 8, in <module>
+    bounding_box_se_texas = dem2basin.get_bounding_boxes_from_coverage_by_shape(shape_input,coverage_input,dem_tile_projects_parent_directory,new_coverage_file = new_coverage_file_parameter)
+  File "/work2/08449/kag/stampede2/DEM2basin/src/dem2basin/dem2basin.py", line 1216, in get_bounding_boxes_from_coverage_by_shape
+    new_coverage_file = new_coverage_file
+  File "/work2/08449/kag/stampede2/DEM2basin/src/dem2basin/dem2basin.py", line 1177, in get_bounding_boxes_by_project
+    dem_tiles.to_file(str(new_coverage_file))
+  File "/work/08449/kag/stampede2/miniconda3/envs/dem2basin/lib/python3.7/site-packages/geopandas/geodataframe.py", line 1086, in to_file
+    _to_file(self, filename, driver, schema, index, **kwargs)
+  File "/work/08449/kag/stampede2/miniconda3/envs/dem2basin/lib/python3.7/site-packages/geopandas/io/file.py", line 330, in _to_file
+    colxn.writerecords(df.iterfeatures())
+  File "/work/08449/kag/stampede2/miniconda3/envs/dem2basin/lib/python3.7/site-packages/fiona/collection.py", line 361, in writerecords
+    self.session.writerecs(records, self)
+  File "fiona/ogrext.pyx", line 1291, in fiona.ogrext.WritingSession.writerecs
+  File "fiona/ogrext.pyx", line 466, in fiona.ogrext.OGRFeatureBuilder.build
+ValueError: Invalid field type <class 'rasterio.coords.BoundingBox'>

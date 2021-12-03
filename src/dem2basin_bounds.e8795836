@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/work/08449/kag/stampede2/DEM2basin/src/get_bounds_for_projects_smallest_huc_SE_Texas.py", line 1, in <module>
+    from dem2basin import dem2basin
+  File "/work2/08449/kag/stampede2/DEM2basin/src/dem2basin/dem2basin.py", line 1122
+    list_of_lists_of_tilenames_in_each_project = []
+                                             ^
+SyntaxError: invalid syntax
